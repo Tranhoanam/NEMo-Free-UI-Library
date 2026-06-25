@@ -1,0 +1,40 @@
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Tranhoanam/NEMo-Free-UI-Library/refs/heads/main/NEMoZLibrary.lua.txt"))()
+
+--Menu Title--
+local Window = Library:CreateWindow({
+    Name = "NEMo Free UI Library" -- Tên menu hiển thị ở Header (Tiêu đề menu)
+})
+
+....
+
+--detai--
+-- 1. Load Library
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Tranhoanam/NEMo-Free-UI-Library/refs/heads/main/NEMoZLibrary.lua.txt"))()
+
+-- 2. Tạo Menu (Header)
+local Window = Library:CreateWindow({
+    Name = "NEMo Free UI Library"
+})
+
+-- 3. Tạo Tab (Ví dụ: Tab chính)
+local Tab1 = Window:CreateTab({
+    Name = "Main"
+})
+
+-- 4. Thêm các Components vào Tab1 (Sử dụng code bạn đã làm)
+-- Ví dụ:
+Tab1:CreateButton("hehe", function()
+    print("Nút đã được nhấn!")
+end)
+
+Tab1:CreateToggle("haha", function(state)
+    if state then
+        -- On
+    else
+        -- Off
+    end
+end)
+
+Tab1:CreateSlider("kaka", 1, 100, function(value)
+    -- Slider value
+end)
