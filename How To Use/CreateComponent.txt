@@ -1,0 +1,94 @@
+--Createbutton, Toggle, Slider, Dropdown--
+
+--CreateButton--
+Tab1:CreateButton("hehe", function()
+end)
+
+....
+
+--CreateToggle--
+Tab1:CreateToggle("haha", function(state)
+    if state then
+        -- The code to execute when it's ON is here
+    else
+        -- The code to execute when OFF is here
+    end
+end)
+
+....
+
+--CreateDropdown--
+Tab1:CreateDropdown("tate", {"ta", "te"}, function(selected)
+    -- This code handles the process when you select one of the options
+end)
+
+....
+
+--CreateDropdown and CreateButton--
+-- Tạo Dropdown "tate" với các tùy chọn "ta" và "te"
+Tab1:CreateDropdown("tate", {"ta", "te"}, function(selected)
+    -- The code to execute when the selection in the dropdown changes
+    print("Bạn đã chọn: " .. selected[1])
+end)
+
+-- Tạo nút bấm "hehe"
+Tab1:CreateButton("hehe", function()
+    -- The code is executed when the "hehe" button is pressed
+end)
+
+....
+
+--CreateDropdown and CreateToggle--
+-- Tạo biến để lưu giá trị Dropdown
+local lua_chon_cua_ban = "ta" 
+
+-- Tạo Dropdown "tate"
+Tab1:CreateDropdown("tate", {"ta", "te"}, function(selected)
+    lua_chon_cua_ban = selected[1]
+end)
+
+-- Tạo Toggle "haha"
+Tab1:CreateToggle("haha", function(state)
+    if state then
+        -- The code executes when ON, for example, using the value of lua_chon_cua_ban
+        print("Đang bật với lựa chọn: " .. lua_chon_cua_ban)
+    else
+        -- Code to execute when OFF
+    end
+end)
+
+....
+
+--CreateSlider 1-100--
+-- Tạo Slider với tên "kaka"
+Tab1:CreateSlider("kaka", 1, 100, function(value)
+    -- 'value' is the number the user selected
+    -- Here is your code.
+end)
+
+....
+
+--CreateSlider and CreateToggle--
+-- Tạo biến lưu trữ giá trị của Slider
+local gia_tri_slider = 1
+
+-- 1. Tạo Slider "kaka"
+Tab1:CreateSlider("kaka", 1, 100, function(value)
+    gia_tri_slider = value
+    -- You can update the parameters right here if needed
+end)
+
+-- 2. Tạo Toggle "haha"
+Tab1:CreateToggle("haha", function(state)
+    if state then
+        -- When Toggle is enabled, it will use the current value of Slider "kaka"
+        print("Đang bật với thông số: " .. gia_tri_slider)
+    else
+        -- When Toggle is turned off
+        print("Đã tắt")
+    end
+end)
+
+....
+
+End

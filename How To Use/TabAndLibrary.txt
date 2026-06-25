@@ -1,0 +1,3 @@
+--Tab and Library Photo ID--
+-- Cấu trúc: Window:CreateTab("Tên hiển thị", "ID ảnh")
+local Tab1 = Window:CreateTab("Trang chủ", "124620632231839") 
