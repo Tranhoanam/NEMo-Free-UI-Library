@@ -1,0 +1,302 @@
+-- Component constructor
+local function CreateButton(name, callback)
+    local btn = Instance.new("TextButton", ContentFrame)
+    btn.Size = UDim2.new(0.9, 0, 0, 45)
+    btn.BackgroundColor3 = Color3.fromRGB(24, 26, 32)
+    btn.Text = "  " .. name
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    btn.Font = Enum.Font.GothamMedium
+    btn.TextXAlignment = Enum.TextXAlignment.Left
+    
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
+    local stroke = Instance.new("UIStroke", btn)
+    stroke.Color = Color3.fromRGB(45, 47, 56)
+    stroke.Thickness = 1.5
+    
+    -- ADD IMAGE TO THE RIGHT
+    local icon = Instance.new("ImageLabel", btn)
+    icon.Size = UDim2.new(0, 30, 0, 30) 
+    icon.Position = UDim2.new(1, -40, 0.5, -15) 
+    icon.BackgroundTransparency = 1
+    icon.Image = "rbxassetid://12333784627" 
+    
+    btn.MouseButton1Click:Connect(callback)
+    return btn
+end
+
+-- Toggle Function 
+local function CreateToggle(name, callback)
+    local state = false
+    local btn = Instance.new("TextButton", ContentFrame)
+    btn.Size = UDim2.new(0.9, 0, 0, 45)
+    btn.BackgroundColor3 = Color3.fromRGB(24, 26, 32)
+    btn.Text = "  " .. name 
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    btn.Font = Enum.Font.GothamMedium
+    btn.TextXAlignment = Enum.TextXAlignment.Left
+    
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
+    local stroke = Instance.new("UIStroke", btn)
+    stroke.Color = Color3.fromRGB(45, 47, 56)
+    stroke.Thickness = 1.5
+    
+    -- Create Toggle Frame
+    local sliderBg = Instance.new("Frame", btn)
+    sliderBg.Size = UDim2.new(0, 50, 0, 25)
+    sliderBg.Position = UDim2.new(1, -60, 0.5, -12)
+    sliderBg.BackgroundColor3 = Color3.fromRGB(45, 47, 56) 
+    Instance.new("UICorner", sliderBg).CornerRadius = UDim.new(1, 0)
+    
+    local sliderKnob = Instance.new("Frame", sliderBg)
+    sliderKnob.Size = UDim2.new(0.5, 0, 1, 0)
+    sliderKnob.BackgroundColor3 = Color3.new(1, 1, 1)
+    Instance.new("UICorner", sliderKnob).CornerRadius = UDim.new(1, 0)
+    
+    btn.MouseButton1Click:Connect(function()
+        state = not state
+        sliderBg.BackgroundColor3 = state and Color3.fromRGB(80, 150, 255) or Color3.fromRGB(45, 47, 56)
+        sliderKnob.Position = state and UDim2.new(0.5, 0, 0, 0) or UDim2.new(0, 0, 0, 0)
+        callback(state)
+    end)
+    return btn
+end
+
+local TweenService = game:GetService("TweenService")
+
+-- MULTI-SELECT DROPDOWN FUNCTION (INLINE EXPANDING)
+local function CreateAdvancedMultiDropdown(name, options, callback)
+    local selectedItems = {}
+    
+    local container = Instance.new("Frame", ContentFrame)
+    container.Size = UDim2.new(0.9, 0, 0, 45) 
+    container.BackgroundColor3 = Color3.fromRGB(24, 26, 32)
+    container.ClipsDescendants = true 
+    Instance.new("UICorner", container).CornerRadius = UDim.new(0, 8)
+    Instance.new("UIStroke", container).Color = Color3.fromRGB(45, 47, 56)
+
+    local topBar = Instance.new("TextButton", container)
+    topBar.Size = UDim2.new(1, 0, 0, 45)
+    topBar.BackgroundTransparency = 1
+    topBar.Text = ""
+
+    local title = Instance.new("TextLabel", topBar)
+    title.Size = UDim2.new(0.4, 0, 1, 0)
+    title.Position = UDim2.new(0, 15, 0, 0)
+    title.Text = name
+    title.TextColor3 = Color3.new(1, 1, 1)
+    title.Font = Enum.Font.GothamMedium
+    title.TextXAlignment = Enum.TextXAlignment.Left
+    title.BackgroundTransparency = 1
+
+    local valueBox = Instance.new("Frame", topBar)
+    valueBox.Size = UDim2.new(0, 130, 0, 25)
+    valueBox.Position = UDim2.new(1, -160, 0.5, -12)
+    valueBox.BackgroundColor3 = Color3.fromRGB(35, 38, 48)
+    Instance.new("UICorner", valueBox).CornerRadius = UDim.new(0, 5)
+
+    local selectedText = Instance.new("TextLabel", valueBox)
+    selectedText.Size = UDim2.new(1, -15, 1, 0)
+    selectedText.Position = UDim2.new(0, 0, 0, 0)
+    selectedText.Text = "Chọn..."
+    selectedText.TextColor3 = Color3.fromRGB(150, 150, 150)
+    selectedText.Font = Enum.Font.Gotham
+    selectedText.TextSize = 12
+    selectedText.BackgroundTransparency = 1
+    selectedText.TextTruncate = Enum.TextTruncate.AtEnd
+    selectedText.TextXAlignment = Enum.TextXAlignment.Right
+
+    local icon = Instance.new("ImageLabel", topBar)
+    icon.Size = UDim2.new(0, 18, 0, 18)
+    icon.Position = UDim2.new(1, -25, 0.5, -9)
+    icon.Image = "rbxassetid://5279719038"
+    icon.BackgroundTransparency = 1
+
+    local listHeight = math.min(#options * 35, 140) 
+    local listFrame = Instance.new("ScrollingFrame", container)
+    listFrame.Size = UDim2.new(1, 0, 0, listHeight)
+    listFrame.Position = UDim2.new(0, 0, 0, 45)
+    listFrame.BackgroundTransparency = 1
+    listFrame.BorderSizePixel = 0
+    listFrame.ScrollBarThickness = 4
+    listFrame.CanvasSize = UDim2.new(0, 0, 0, #options * 35)
+
+    local isExpanded = false
+    topBar.MouseButton1Click:Connect(function()
+        isExpanded = not isExpanded
+        local targetHeight = isExpanded and (45 + listHeight) or 45
+        TweenService:Create(container, TweenInfo.new(0.25, Enum.EasingStyle.Quad), {Size = UDim2.new(0.9, 0, 0, targetHeight)}):Play()
+        TweenService:Create(icon, TweenInfo.new(0.25, Enum.EasingStyle.Quad), {Rotation = isExpanded and 180 or 0}):Play()
+    end)
+
+    for i, opt in ipairs(options) do
+        local itemBtn = Instance.new("TextButton", listFrame)
+        itemBtn.Size = UDim2.new(1, 0, 0, 35)
+        itemBtn.Position = UDim2.new(0, 0, 0, (i-1)*35)
+        itemBtn.BackgroundColor3 = Color3.fromRGB(28, 30, 36)
+        itemBtn.Text = ""
+        itemBtn.BorderSizePixel = 0
+
+        local checkBg = Instance.new("Frame", itemBtn)
+        checkBg.Size = UDim2.new(0, 16, 0, 16)
+        checkBg.Position = UDim2.new(0, 15, 0.5, -8)
+        checkBg.BackgroundColor3 = Color3.fromRGB(45, 47, 56)
+        Instance.new("UICorner", checkBg).CornerRadius = UDim.new(0, 4)
+
+        local checkFill = Instance.new("Frame", checkBg)
+        checkFill.Size = UDim2.new(1, -4, 1, -4)
+        checkFill.Position = UDim2.new(0, 2, 0, 2)
+        checkFill.BackgroundColor3 = Color3.fromRGB(80, 150, 255)
+        checkFill.Visible = false 
+        Instance.new("UICorner", checkFill).CornerRadius = UDim.new(0, 2)
+
+        local itemText = Instance.new("TextLabel", itemBtn)
+        itemText.Size = UDim2.new(1, -50, 1, 0)
+        itemText.Position = UDim2.new(0, 40, 0, 0)
+        itemText.Text = opt
+        itemText.TextColor3 = Color3.fromRGB(200, 200, 200)
+        itemText.Font = Enum.Font.Gotham
+        itemText.TextSize = 13
+        itemText.TextXAlignment = Enum.TextXAlignment.Left
+        itemText.BackgroundTransparency = 1
+
+        itemBtn.MouseButton1Click:Connect(function()
+            local idx = table.find(selectedItems, opt)
+            if idx then
+                table.remove(selectedItems, idx)
+                checkFill.Visible = false
+                itemText.TextColor3 = Color3.fromRGB(200, 200, 200)
+            else
+                table.insert(selectedItems, opt)
+                checkFill.Visible = true
+                itemText.TextColor3 = Color3.fromRGB(255, 255, 255)
+            end
+
+            if #selectedItems > 0 then
+                selectedText.Text = table.concat(selectedItems, ", ")
+                selectedText.TextColor3 = Color3.new(1, 1, 1)
+            else
+                selectedText.Text = "Chọn..."
+                selectedText.TextColor3 = Color3.fromRGB(150, 150, 150)
+            end
+            callback(selectedItems)
+        end)
+    end
+    return container
+end
+
+-- IMPROVED SLIDER FUNCTION: BUG FIXES
+local function CreateSlider(name, min, max, callback)
+    local container = Instance.new("Frame", ContentFrame)
+    container.Size = UDim2.new(0.9, 0, 0, 60)
+    container.BackgroundColor3 = Color3.fromRGB(24, 26, 32)
+    Instance.new("UICorner", container).CornerRadius = UDim.new(0, 8)
+    Instance.new("UIStroke", container).Color = Color3.fromRGB(45, 47, 56)
+    
+    local title = Instance.new("TextLabel", container)
+    title.Size = UDim2.new(0.3, 0, 1, 0)
+    title.Position = UDim2.new(0, 15, 0, 0)
+    title.Text = name
+    title.TextColor3 = Color3.new(1, 1, 1)
+    title.Font = Enum.Font.GothamMedium
+    title.BackgroundTransparency = 1
+    title.TextXAlignment = Enum.TextXAlignment.Left
+
+    local valueBox = Instance.new("TextBox", container)
+    valueBox.Size = UDim2.new(0, 45, 0, 30)
+    valueBox.Position = UDim2.new(0, 140, 0.5, -15) -- Canh chỉnh góc trái hợp lý
+    valueBox.BackgroundColor3 = Color3.fromRGB(35, 38, 48)
+    valueBox.Text = tostring(max) -- Mặc định bắt đầu là giá trị max (100) theo ảnh thiết kế
+    valueBox.TextColor3 = Color3.new(1, 1, 1)
+    valueBox.Font = Enum.Font.GothamBold
+    Instance.new("UICorner", valueBox).CornerRadius = UDim.new(0, 4)
+
+    -- 4. Thanh trượt nền (Background) - ĐÃ DỊCH X = 0.45 ĐỂ LÙI VỀ BÊN TRÁI HẲN
+    local sliderBg = Instance.new("Frame", container)
+    sliderBg.Size = UDim2.new(0.45, 0, 0, 6)
+    sliderBg.Position = UDim2.new(0, 210, 0.5, -3) -- Nối đuôi sát ngay sau ô nhập số, nằm gọn gàng bên trong
+    sliderBg.BackgroundColor3 = Color3.fromRGB(45, 47, 56)
+    Instance.new("UICorner", sliderBg).CornerRadius = UDim.new(1, 0)
+
+    local progress = Instance.new("Frame", sliderBg)
+    progress.Size = UDim2.new(1, 0, 1, 0) -- Khởi tạo full 100% thanh ban đầu
+    progress.BackgroundColor3 = Color3.fromRGB(80, 150, 255)
+    Instance.new("UICorner", progress).CornerRadius = UDim.new(1, 0)
+
+    local knob = Instance.new("ImageLabel", sliderBg)
+    knob.AnchorPoint = Vector2.new(0.5, 0.5) 
+    knob.Size = UDim2.new(0, 22, 0, 22)
+    knob.Position = UDim2.new(1, 0, 0.5, 0) -- Đặt núm kéo ở mức cuối thanh
+    knob.BackgroundTransparency = 1
+    knob.Image = "rbxassetid://5639840603"
+    knob.ZIndex = 5
+
+    local hitbox = Instance.new("TextButton", sliderBg)
+    hitbox.AnchorPoint = Vector2.new(0.5, 0.5)
+    hitbox.Size = UDim2.new(1, 30, 0, 40) 
+    hitbox.Position = UDim2.new(0.5, 0, 0.5, 0)
+    hitbox.BackgroundTransparency = 1
+    hitbox.Text = ""
+    hitbox.ZIndex = 10
+
+    local dragging = false
+    local function updateSlider(inputX)
+        local sliderX = sliderBg.AbsolutePosition.X
+        local sliderWidth = sliderBg.AbsoluteSize.X
+        local percent = math.clamp((inputX - sliderX) / sliderWidth, 0, 1)
+        
+        local val = math.floor(min + ((max - min) * percent))
+        
+        knob.Position = UDim2.new(percent, 0, 0.5, 0)
+        progress.Size = UDim2.new(percent, 0, 1, 0)
+        valueBox.Text = tostring(val)
+        
+        callback(val)
+    end
+
+    hitbox.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            ContentFrame.ScrollingEnabled = false 
+            updateSlider(input.Position.X)
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            updateSlider(input.Position.X)
+        end
+    end)
+
+    UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = false
+            ContentFrame.ScrollingEnabled = true 
+        end
+    end)
+
+    valueBox.FocusLost:Connect(function()
+        local num = tonumber(valueBox.Text)
+        if num then 
+            local clamped = math.clamp(num, min, max)
+            local percent = (clamped - min) / (max - min)
+            knob.Position = UDim2.new(percent, 0, 0.5, 0)
+            progress.Size = UDim2.new(percent, 0, 1, 0)
+            valueBox.Text = tostring(clamped)
+            callback(clamped)
+        else
+            valueBox.Text = tostring(min)
+        end
+    end)
+end
+
+-- ==========================================
+-- FUNCTIONALITY CREATION AREA
+-- ==========================================
+CreateButton("Button Nút Bấm", function() print("Button Pressed") end)
+CreateToggle("Gạt Bật/Tắt", function(state) print("Toggle:", state) end)
+CreateAdvancedMultiDropdown("Chọn vật phẩm", {"Vật phẩm 1", "Vật phẩm 2", "Vật phẩm 3"}, function(sel) 
+    print("Chọn:", table.concat(sel, ", ")) 
+end)
+CreateSlider("Độ sáng", 0, 100, function(v) 
+    print("Giá trị Slider:", v) 
+end)
