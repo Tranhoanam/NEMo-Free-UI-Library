@@ -1,0 +1,11 @@
+rbxassetid://
+
+[Main(home) icon ID]: 124620632231839
+[player icon]: 117259180607823
+[calendar icon]: 9955921434251
+[shop icon]: 139650104834071
+[target icon]: 139650104834071
+[fingerprint icon (at button)]: 12333784627
+[arrow icon (at Dropdown)]: 5279719038
+[star icon (at Silder)]: 5639840603
+[four-directional arrow icon (at mini menu)]: 94225529221725
